@@ -1,19 +1,19 @@
 //Dependencies
 const mongoose = require("mongoose");
 const Models = require("./models.js");
-
+const moviesRouter = require('./movies/movies-router');
 const Movies = Models.Movie;
 const Users = Models.User;
 
-// mongoose.connect("mongodb://localhost:27017/myFlixDB", {
-//   useNewUrlParser: true,
-//   useUnifiedTopology: true
-// });
-
-mongoose.connect(process.env.CONNECTION_URI, {
+mongoose.connect("mongodb://localhost:27017/myFlixDB", {
   useNewUrlParser: true,
   useUnifiedTopology: true
 });
+
+// mongoose.connect(process.env.CONNECTION_URI, {
+//   useNewUrlParser: true,
+//   useUnifiedTopology: true
+// });
 
 const express = require("express"),
   morgan = require("morgan"),
@@ -26,6 +26,8 @@ const cors = require("cors");
 app.use(morgan("common"));
 app.use(express.static("public"));
 app.use(bodyParser.json());
+
+app.use('/movies', moviesRouter)
 
 let auth = require("./auth")(app);
 
@@ -65,20 +67,20 @@ app.get("/", (req, res) => {
 });
 
 // Return all movies
-app.get(
-  "/movies",
-  passport.authenticate("jwt", { session: false }),
-  (req, res) => {
-    Movies.find()
-      .then(movies => {
-        res.status(200).json(movies);
-      })
-      .catch(err => {
-        console.error(err);
-        res.status(500).send("Error: " + err);
-      });
-  }
-);
+// app.get(
+//   "/movies",
+//   passport.authenticate("jwt", { session: false }),
+//   (req, res) => {
+//     Movies.find()
+//       .then(movies => {
+//         res.status(200).json(movies);
+//       })
+//       .catch(err => {
+//         console.error(err);
+//         res.status(500).send("Error: " + err);
+//       });
+//   }
+// );
 
 // Returns data about a single movie by title
 app.get(
